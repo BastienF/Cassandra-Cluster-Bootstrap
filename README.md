@@ -4,6 +4,8 @@ Ansible Bootstrap for Cassandra Cluster
 ## Executive summary
 
 This repository provides the ansible scripts to set up a Datastax Cassandra cluster on CentOS servers.
+Included: Datastax-Opscenter monitoring
+Not Included: SSL, security, encryption
 
 The destination servers have to be setted in inventory file **./inventory.ini**
 
@@ -25,6 +27,10 @@ This repository provides scripts to instanciate a 3-nodes virtualized cluster wh
 2. Provision the cassandra cluster: `ansible-playbook -i inventory.ini init_cassandra_cluster.yml`
 3. Access to cassandra nodes: `ssh ansible@192.168.10.1[1-3]`
 3. Destroy the cluster: `vangrant destroy`
+
+Access Opscenter via :
+* http://192.168.10.11:8888
+* admin:admin
 
 ## Getting started
 
