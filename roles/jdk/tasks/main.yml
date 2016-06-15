@@ -1,0 +1,3 @@
+# file: roles/jdk/tasks/main.yml
+- name: installing java 7
+  yum: pkg=java state=latest

@@ -1,0 +1,12 @@
+# file: roles/cassandra/tasks/supervise.yml
+
+- name: Force le démarrage de Cassandra
+  service: name=cassandra state=started enabled=true
+  notify: wait for node to have joined the cluster
+
+- name: Flush handlers
+  meta: flush_handlers
+
+#- name: wait for Cassandra to be up
+#  wait_for: port={{ cassandra_native_port }} host={{ hostvars[inventory_hostname] }} connect_timeout=5 timeout=120 state=started
+#  tags: smoketest

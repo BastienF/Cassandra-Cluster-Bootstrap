@@ -1,0 +1,36 @@
+# file: roles/cassandra/defaults/main.yml
+
+cassandra_version: 21-2.1.14-1
+cassandra_package_name: cassandra{{ cassandra_version }}
+
+cassandra_user: cassandra
+cassandra_group: cassandra
+cassandra_uid: 3050
+cassandra_gid: 3050
+
+
+# Disk
+cassandra_data_file_dir: "{{ base_data_dir }}/cassandra/data"
+cassandra_data_commitlog_dir: "{{ base_data_dir }}/cassandra/commitlog"
+cassandra_data_cache_dir: "{{ base_data_dir }}/cassandra/saved_caches"
+
+# Logdir
+cassandra_logdir: "{{ base_log_dir }}/cassandra"
+
+#Confdir
+cassandra_conf_dir: /etc/cassandra/conf
+
+# Network
+cassandra_endpoint_snitch: SimpleSnitch
+
+## Intra cluster
+cassandra_jmx_port: 7199
+
+## Extra cluster
+cassandra_native_port: 9042
+cassandra_thrift_port: 9160
+
+# Cluster conf
+cassandra_cluster_name: Cassandra Cluster Bootstrap
+cassandra_max_seed_nodes: 3
+cassandra_seeds: "{{ groups['cassandra'][0:cassandra_max_seed_nodes] | join(',') }}"

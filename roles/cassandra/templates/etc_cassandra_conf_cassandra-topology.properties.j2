@@ -1,0 +1,8 @@
+#server=datacenter:rack
+
+{% for host in groups['cassandra'] %}
+{{ hostvars[host]['inventory_hostname'] }}={{ hostvars[host]['datacenter'] }}:{{ hostvars[host]['rack'] }}
+{% endfor %}
+
+# default for unknown nodes
+default=DCA:RAC1

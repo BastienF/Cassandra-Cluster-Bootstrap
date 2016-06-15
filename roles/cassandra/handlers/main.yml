@@ -1,0 +1,26 @@
+# file: roles/cassandra/handlers/main.yml
+
+- name: restart cassandra
+  debug: msg="Let's restart Cassandra! "
+  notify: flush cassandra memtables
+
+- name: flush cassandra memtables
+  command: nodetool flush
+  notify: do restart cassandra
+
+- name: do restart cassandra
+  service: name=cassandra state=restarted
+  notify: wait for node to have joined the cluster
+
+- name: wait for node to have joined the cluster
+  command: bash -c "test $(nodetool status -r | grep -w 'UN' | grep '{{ inventory_hostname }}' | wc -l) -eq 1"
+  changed_when: false
+  retries: 10
+  delay: 10
+  until: result.rc==0
+  register: result
+  tags: smoketest
+
+- name: Refresh cassandra runlevel installation
+  command: chkconfig cassandra on
+

@@ -1,0 +1,17 @@
+---
+
+- include: common.yml
+  vars:
+    hosts_filter: ":!localhost:!127.0.0.1"
+
+- hosts: cassandra
+  become: yes
+  roles:
+    - { role: cassandra,
+      tags: [ cassandra ]
+    }
+
+- hosts: cassandra
+  roles:
+    - stack-smoke-tests/cassandra
+  tags: [ smoketest, cassandra ]

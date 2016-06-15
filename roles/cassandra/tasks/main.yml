@@ -1,0 +1,8 @@
+# file: roles/cassandra/tasks/main.yml
+
+- include: install.yml
+
+- include: configure.yml
+
+- include: start.yml
+

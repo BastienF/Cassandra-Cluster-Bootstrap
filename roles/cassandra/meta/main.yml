@@ -1,0 +1,12 @@
+# file: roles/cassandra/meta/main.yml
+
+dependencies:
+  - { role: jdk }
+  - { role: user_and_group,
+      user_description: "Service Account for Cassandra",
+      user_name: cassandra,
+      user_id: "{{ cassandra_uid }}",
+      group_id: "{{ cassandra_gid }}",
+      user_shell: /bin/bash,
+      user_home: /var/lib/cassandra
+    }

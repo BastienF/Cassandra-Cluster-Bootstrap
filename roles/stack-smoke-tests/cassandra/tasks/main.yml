@@ -1,0 +1,9 @@
+---
+  - name: wait for all nodes to have joined the cluster
+    command: bash -c "test $(nodetool status | grep -w 'UN' | wc -l) -eq {{ groups['cassandra']|length }}"
+    changed_when: false
+    run_once: yes
+    retries: 10
+    delay: 10
+    until: result.rc==0
+    register: result

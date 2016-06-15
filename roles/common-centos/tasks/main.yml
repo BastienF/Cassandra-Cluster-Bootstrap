@@ -1,0 +1,22 @@
+# file: roles/commons/tasks/main.yml
+
+- name: Installation de paquets de base sur Centos
+  yum: pkg={{ item }}
+  with_items:
+    - curl
+    - wget
+    - tar
+    - unzip
+    - vim
+  tags: yum_install_base_centos
+
+- name: Create base logdir directory if not exists
+  file: name={{ item }} state=directory owner=root group=root mode=0755
+  with_items:
+    - "{{ base_log_dir }}"
+    - "{{ base_data_dir }}"
+
+- name: "Build hosts file"
+  lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_ssh_host }} {{item}}" state=present
+  when: hostvars[item].ansible_default_ipv4.address is defined
+  with_items: groups['all']

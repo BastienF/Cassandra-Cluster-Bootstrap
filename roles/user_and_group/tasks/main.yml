@@ -1,0 +1,35 @@
+---
+
+- name: Check mandatory attributes
+  fail: msg="missing attributes, one of (user_name,user_id)"
+  when: user_name is not defined or user_id is not defined
+
+- name: get current uid for user
+  command: id -u {{ user_name }}
+  register: uid_result
+  failed_when: false
+  changed_when: false
+  always_run: yes
+
+- name: get current gid for user
+  command: id -g {{ user_name }}
+  register: gid_result
+  failed_when: false
+  changed_when: false
+  always_run: yes
+
+- name: warning message for UID mismatch
+  debug: msg="Warning, installed UID for {{ user_name }}({{ uid_result.stdout }}) does not match expected one {{ user_id }}"
+  when: uid_result.rc == 0 and uid_result.stdout != user_id
+  changed_when: true
+
+- name: warning message for GID mismatch
+  debug: msg="Warning, installed GID for {{ group_name|default(user_name) }}({{ gid_result.stdout }}) does not match expected one {{ group_id|default(user_id) }}"
+  when: gid_result.rc == 0 and gid_result.stdout != group_id|default(user_id)
+  changed_when: true
+
+- name: Make sure the group is present
+  action: group gid={{ gid_result.stdout if gid_result.rc == 0 else group_id|default(user_id) }} name={{ group_name|default(user_name) }} state=present
+
+- name: Make sure the user is present
+  user: uid={{ uid_result.stdout if uid_result.rc == 0 else user_id }} name={{ user_name }} group={{ group_name|default(user_name) }} home="{{ user_home|default(omit) }}" shell={{ user_shell }} state=present comment="{{ user_comment|default(omit) }}"

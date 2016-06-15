@@ -1,0 +1,11 @@
+---
+
+  - hosts: all{{ hosts_filter | default("") }}
+    gather_facts: yes
+    tags: [ always ]
+
+  - hosts: all{{ hosts_filter | default("") }}
+    become: yes
+    roles:
+      - { role: common-centos }
+    tags: [ common ]

@@ -1,0 +1,25 @@
+[Unit]
+Description=Cassandra
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/cassandra/cassandra.pid
+User={{ cassandra_user }}
+Group={{ cassandra_group }}
+ExecStartPre=-/bin/sh -c "/usr/bin/mkdir -p /var/run/cassandra && /usr/bin/mkdir -p /logdir/cassandra && /usr/bin/chown -R cassandra:cassandra /var/run/cassandra /logdir/cassandra"
+PermissionsStartOnly=true
+ExecStart=/bin/sh -c "/usr/sbin/cassandra -p /var/run/cassandra/cassandra.pid >>/logdir/cassandra/server.log 2>&1"
+EnvironmentFile=-/etc/sysconfig/cassanra
+EnvironmentFile=-/etc/default/cassandra
+LimitNOFILE=infinity
+Environment=CASSANDRA_HOME=/usr/share/cassandra
+Environment=CASSANDRA_CONF=/etc/cassandra/conf
+Environment=CASSANDRA_INCLUDE=/usr/share/cassandra/cassandra.in.sh
+Restart=always
+StartLimitInterval=1800
+StartLimitBurst=5
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

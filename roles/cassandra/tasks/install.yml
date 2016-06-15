@@ -1,0 +1,19 @@
+# file: roles/cassandra/tasks/install.yml
+
+- name: Add Datastax repository
+  copy: dest="/etc/yum.repos.d/datastax.repo" src="datastax.repo"
+
+- name: Install cassandra rpm
+  yum: name={{ cassandra_package_name }}
+
+- name: Create data and logdir if missing
+  file: path={{ item }} state=directory owner={{ cassandra_user }} group={{ cassandra_group }} recurse=yes
+  with_items:
+    - "{{ cassandra_data_file_dir }}"
+    - "{{ cassandra_data_commitlog_dir }}"
+    - "{{ cassandra_data_cache_dir }}"
+    - "{{ cassandra_logdir }}"
+
+- name: Ensure Cassandra log file has adequate owner/group
+  file: path="{{ cassandra_logdir }}/cassandra.log" state=touch owner={{ cassandra_user }} group={{ cassandra_group }}
+

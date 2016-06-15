@@ -1,0 +1,28 @@
+# file: roles/cassandra/tasks/configure.yml
+
+- name: Cassandra | Update the cassandra configuration
+  template: src=etc_cassandra_conf_{{ item }}.j2 dest={{ cassandra_conf_dir}}/{{ item }} backup=yes
+  with_items:
+    - cassandra.yaml
+    - cassandra-env.sh
+    - cassandra-topology.properties
+    - logback.xml
+  notify:
+    - restart cassandra
+
+- name: check service status
+  shell: "service cassandra status"
+  register: service_status_result
+  ignore_errors: yes
+
+- name: flush cassandra memtables
+  command: nodetool flush
+  when: "service_status_result.rc is defined and 'running' in service_status_result"
+
+- name: Install the cassandra Systemd init script
+  template: src=etc_systemd_system_cassandra.service.j2 dest=/etc/systemd/system/cassandra.service owner=root mode=0755
+  notify:
+    - restart cassandra
+
+- name: Reload systemd
+  command: systemctl daemon-reload
