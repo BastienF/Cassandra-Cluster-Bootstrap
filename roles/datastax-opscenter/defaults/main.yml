@@ -1,0 +1,11 @@
+# file: roles/datastax-opscenter/defaults/main.yml
+
+opscenter_version: "5.2.4"
+
+cassandra_user: "cassandra"
+cassandra_group: "cassandra"
+cassandra_admin_login: "cassandra"
+cassandra_admin_password: "cassandra"
+
+opscenter_uid: 3010
+opscenter_gid: 3010

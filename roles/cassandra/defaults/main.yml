@@ -29,8 +29,3 @@ cassandra_jmx_port: 7199
 ## Extra cluster
 cassandra_native_port: 9042
 cassandra_thrift_port: 9160
-
-# Cluster conf
-cassandra_cluster_name: Cassandra Cluster Bootstrap
-cassandra_max_seed_nodes: 3
-cassandra_seeds: "{{ groups['cassandra'][0:cassandra_max_seed_nodes] | join(',') }}"

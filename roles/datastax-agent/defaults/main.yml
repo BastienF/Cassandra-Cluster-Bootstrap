@@ -1,0 +1,10 @@
+# file: roles/datastax-agent/defaults/main.yml
+
+datastax_agent_version: "5.2.4"
+cassandra_user: cassandra
+cassandra_group: cassandra
+cassandra_uid: 3050
+cassandra_gid: 3050
+
+datastax_agent_logdir: "{{ base_log_dir }}/datastax-agent"
+

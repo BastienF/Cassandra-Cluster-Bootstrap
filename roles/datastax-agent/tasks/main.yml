@@ -1,0 +1,5 @@
+# file: roles/datastax-agent/tasks/main.yml
+
+- include: install.yml
+- include: configure.yml
+- include: start.yml

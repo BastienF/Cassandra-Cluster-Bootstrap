@@ -1,0 +1,146 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          datastax-agent
+# Required-Start:    $network $local_fs $remote_fs $named $syslog $time
+# Required-Stop:     $network $local_fs $remote_fs $syslog
+# chkconfig:         2345 80 05
+# description:       DataStax Agent
+### END INIT INFO
+
+DESC="DataStax Agent"
+NAME="datastax-agent"
+USER="cassandra"
+MONITOR_NAME="datastax-agent-monitor"
+
+MONITOR_PIDFILE="/var/run/$NAME/datastax-agent-monitor.pid"
+LOG="{{ datastax_agent_logdir }}/agent.log"
+STARTUP_LOG="{{ datastax_agent_logdir }}/startup.log"
+PID="/var/run/$NAME/$NAME.pid"
+OPSC_SSL_DIR="/var/lib/datastax-agent/ssl"
+OPSC_ADDR_DIR="/var/lib/datastax-agent/conf"
+
+SCRIPTNAME="$0"
+
+# Read configuration variable file if it is present
+[ -r "/etc/default/$NAME" ] && . "/etc/default/$NAME"
+
+# redhat init functions
+. /etc/init.d/functions
+
+if [ ! -d "/var/run/$NAME" ]; then
+    mkdir "/var/run/$NAME"
+fi
+
+if [ ! -f "$LOG" ]; then
+    touch "$LOG"
+    chown $USER "$LOG"
+fi
+
+if [ ! -f "$STARTUP_LOG" ]; then
+    touch "$STARTUP_LOG"
+    chown $USER "$STARTUP_LOG"
+fi
+
+if [ ! -f "$PID" ]; then
+    touch "$PID"
+    chown $USER "$PID"
+fi
+
+is_running()
+{
+    status -p $1 "$NAME" &> /dev/null
+    return $?
+}
+
+do_start()
+{
+    # Return
+    #   0 if daemon has been started
+    #   1 if daemon was already running
+    #   2 if daemon could not be started
+
+    is_running $MONITOR_PIDFILE && return 1
+    is_running $PID && return 1
+
+    nohup /usr/share/datastax-agent/bin/datastax_agent_monitor >> $LOG 2>&1 &
+    sleep 1
+
+    echo -n "Starting datastax-agent"
+    daemon --pidfile $PID --user $USER \
+        PID=$PID \
+        OPSC_SSL_DIR="'$OPSC_SSL_DIR'" \
+        OPSC_ADDR_DIR="'$OPSC_ADDR_DIR'" \
+        STARTUP_LOG="'$STARTUP_LOG'" \
+        /usr/share/datastax-agent/bin/datastax-agent
+    echo
+
+    return 0
+}
+
+do_stop()
+{
+    # Return
+    #   0 if daemon has been stopped
+    #   1 if daemon was already stopped
+    #   2 if daemon could not be stopped
+    #   other if a failure occurred
+
+    # stop the monitor process first
+    echo -n "Stopping $MONITOR_NAME"
+    killproc -p "$MONITOR_PIDFILE" "$MONITOR_NAME"
+    MONITOR_RETVAL=$?
+    echo
+
+    [ $MONITOR_RETVAL -eq 2 ] && return 2
+    rm -f "$MONITOR_PIDFILE"
+
+    # then stop the agent
+    echo -n "Stopping $NAME"
+    killproc -p $PID "$NAME"
+    RETVAL=$?
+    echo
+
+    [ $RETVAL -eq 2 ] && return 2
+    rm -f "$PID"
+    return "$RETVAL"
+}
+
+case "$1" in
+  start)
+    echo "Starting $DESC $NAME"
+    do_start
+  ;;
+  stop)
+    echo "Stopping $DESC"
+    do_stop
+    ;;
+  status)
+    status -p $PID $NAME
+    exit $?
+    ;;
+  #reload|force-reload)
+    #
+    # If do_reload() is not implemented then leave this commented out
+    # and leave 'force-reload' as an alias for 'restart'.
+    #
+    #log_daemon_msg "Reloading $DESC" "$NAME"
+    #do_reload
+    #log_end_msg $?
+    #;;
+  restart|force-reload)
+    #
+    # If the "reload" option is implemented then remove the
+    # 'force-reload' alias
+    #
+    echo "Restarting $DESC $NAME"
+    do_stop
+    [ $? -eq 0 ] && do_start
+    ;;
+  *)
+    echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+    exit 3
+    ;;
+esac
+
+:
+

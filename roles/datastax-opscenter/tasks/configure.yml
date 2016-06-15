@@ -1,0 +1,25 @@
+# file: roles/datastax-opscenter/tasks/configure.yml
+
+- name: Create the OpsCenter log folder
+  file:
+    path="{{base_log_dir }}/opscenter"
+    owner="opscenter"
+    group="opscenter"
+    state=directory
+
+- name: Update the OpsCenter main configuration
+  template:
+    src=etc_opscenter_opscenterd.conf.j2
+    dest=/etc/opscenter/opscenterd.conf
+  notify: restart opscenter
+
+- name: Creation du répertoire de configuration clusters s'il n'existe pas déjà
+  file:
+    path=/etc/opscenter/clusters
+    state=directory
+
+- name: Update the OpsCenter cluster configuration
+  template:
+    src: etc_opscenter_clusters_cluster.conf.j2
+    dest: /etc/opscenter/clusters/{{ cassandra_cluster_name | replace(' ','_') }}.conf
+  notify: restart opscenter

@@ -1,0 +1,24 @@
+# file: roles/datastax-agent/tasks/configure.yml
+
+- name: Creation du répertoire de configuration s'il n'existe pas déjà
+  file: path=/etc/datastax-agent/ owner={{ cassandra_user }} group={{ cassandra_group }} state=directory
+
+- name: Mise a jour de la configuration
+  template: src=etc_datastax-agent_address.yaml.j2 dest=/etc/datastax-agent/address.yaml owner={{ cassandra_user }} group={{ cassandra_group }}
+  notify:
+   - restart datastax-agent
+
+- name: Symlink conf
+  file: src=/etc/datastax-agent/address.yaml path=/var/lib/datastax-agent/conf/address.yaml state=link force=yes
+  notify:
+   - restart datastax-agent
+
+- name: Install the datastax-agent init script
+  template: src=etc_init.d_datastax-agent.j2 dest=/etc/init.d/datastax-agent owner={{ cassandra_user }} group={{ cassandra_group }} mode=0755
+  notify:
+    - restart datastax-agent
+
+- name: Update the datastax-agent log4j configuration
+  template: src=etc_datastax_agent_config_log4j.properties.j2 dest=/etc/datastax-agent/log4j.properties owner={{ cassandra_user }} group={{ cassandra_group }} mode=0755
+  notify:
+    - restart datastax-agent

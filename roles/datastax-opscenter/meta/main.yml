@@ -1,0 +1,11 @@
+# file: roles/datastax-opscenter/meta/main.yml
+
+dependencies:
+  - { role: user_and_group,
+      user_description: "Service Account for Datastax OPSCenter",
+      user_name: opscenter,
+      user_id: "{{ opscenter_uid }}",
+      group_id: "{{ opscenter_gid }}",
+      user_shell: /bin/bash,
+      user_home: /usr/share/opscenter
+    }

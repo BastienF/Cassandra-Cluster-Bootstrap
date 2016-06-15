@@ -1,0 +1,15 @@
+# file: roles/datastax-agent/tasks/install.yml
+
+- name: Installation RPM Datastack Agent
+  yum: name=datastax-agent-{{ datastax_agent_version }} state=installed
+
+- name: Create data and logdir if missing
+  file: path={{ item }} state=directory owner={{ cassandra_user }} group={{ cassandra_group }}
+  with_items:
+    - "{{ datastax_agent_logdir }}"
+
+- name: Ensure datastax-agent log file has adequate owner/group
+  file: path="{{ datastax_agent_logdir }}/agent.log" state=touch owner={{ cassandra_user }} group=root
+
+- name: Ensure datastax-agent startup log file has adequate owner/group
+  file: path="{{ datastax_agent_logdir }}/startup.log" state=touch owner={{ cassandra_user }} group=root

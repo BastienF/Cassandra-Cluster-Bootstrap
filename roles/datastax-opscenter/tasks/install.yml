@@ -1,0 +1,4 @@
+# file: roles/datastax-opscenter/tasks/install.yml
+
+- name: Installation RPM OpsCenter
+  yum: name=opscenter-{{ opscenter_version }} state=installed

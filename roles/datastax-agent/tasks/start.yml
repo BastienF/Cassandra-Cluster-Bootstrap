@@ -1,0 +1,4 @@
+# file: roles/datastax-agent/tasks/supervise.yml
+
+- name: Force le redémarrage de DataStax Agent
+  service: name=datastax-agent state=restarted enabled=true

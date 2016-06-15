@@ -1,0 +1,4 @@
+# file: roles/datastax-opscenter/tasks/supervise.yml
+
+- name: Force le démarrage de OpsCenter si nécessaire
+  service: name=opscenterd state=started enabled=true

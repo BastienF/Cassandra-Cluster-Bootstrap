@@ -1,0 +1,4 @@
+# file: roles/datastax-opscenter/handlers/main.yml
+
+- name: restart opscenter
+  service: name=opscenterd state=restarted

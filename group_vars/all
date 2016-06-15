@@ -1,4 +1,11 @@
+# Ansible vars
 ansible_ssh_user: ansible
 
+# Admin directories
 base_data_dir: /data
 base_log_dir: /logdir
+
+# Cassandra cluster conf
+cassandra_cluster_name: Cassandra Cluster Bootstrap
+cassandra_max_seed_nodes: 3
+cassandra_seeds: "{{ groups['cassandra'][0:cassandra_max_seed_nodes] | join(',') }}"

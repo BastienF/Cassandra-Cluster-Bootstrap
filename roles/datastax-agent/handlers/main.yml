@@ -1,0 +1,4 @@
+# file: roles/datastax-agent/handlers/main.yml
+
+- name: restart datastax-agent
+  service: name=datastax-agent state=restarted

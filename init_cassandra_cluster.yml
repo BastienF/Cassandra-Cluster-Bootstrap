@@ -11,6 +11,16 @@
       tags: [ cassandra ]
     }
 
+- hosts: datastax-opscenter
+  become: yes
+  roles:
+    - { role: datastax-opscenter, tags: [ datastax-opscenter ] }
+
+- hosts: datastax-agent
+  become: yes
+  roles:
+    - { role: datastax-agent, tags: [ datastax-agent ] }
+
 - hosts: cassandra
   roles:
     - stack-smoke-tests/cassandra
