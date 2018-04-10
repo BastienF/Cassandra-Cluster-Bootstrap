@@ -4,8 +4,6 @@
 # Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_API_VERSION = "2"
 
-# IP addresses of the nodes
-@subnet = "192.168.10"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "centos/7"
@@ -13,7 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   (1..3).each do |i|
     config.vm.define "node-#{i}" do |config|
       config.vm.host_name = "node-#{i}"
-      config.vm.network "private_network", ip: "#{@subnet}.1#{i}"
+      config.vm.network :private_network, ip: "192.168.33.3#{i}"
       config.vm.provider :virtualbox do |vb|
         vb.customize ["modifyvm", :id, "--cpus", 2]
         vb.memory = 1024

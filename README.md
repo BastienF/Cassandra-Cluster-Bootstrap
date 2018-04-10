@@ -21,15 +21,15 @@ The destination servers have to be setted in inventory file **./inventory.ini**
 
 ## Demo exemple
 
-This repository provides scripts to instanciate a 3-nodes virtualized cluster which runs on 192.168.10.0/24 network.
+This repository provides scripts to instanciate a 3-nodes virtualized cluster which runs on 192.168.33.0/24 network.
 
 1. Instanciate the VMs: `vagrant up`
 2. Provision the cassandra cluster: `ansible-playbook -i inventory.ini init_cassandra_cluster.yml`
-3. Access to cassandra nodes: `ssh ansible@192.168.10.1[1-3]`
+3. Access to cassandra nodes: `ssh ansible@192.168.33.3[1-3]`
 3. Destroy the cluster: `vangrant destroy`
 
 Access Opscenter via :
-* http://192.168.10.11:8888
+* http://192.168.33.31:8888
 * admin:admin
 
 ## Getting started

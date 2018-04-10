@@ -16,7 +16,10 @@
     - "{{ base_log_dir }}"
     - "{{ base_data_dir }}"
 
-- name: "Build hosts file"
-  lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_ssh_host }} {{item}}" state=present
-  when: hostvars[item].ansible_default_ipv4.address is defined
-  with_items: groups['all']
+- name: Build hosts file
+  lineinfile:
+    dest: "/etc/hosts"
+    regexp: ".*{{ item }}$"
+    line: "{{ hostvars[item].ansible_ssh_host }} {{item}}"
+    state: present
+  with_items: "{{groups['all'] }}"
